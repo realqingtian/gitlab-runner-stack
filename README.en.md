@@ -131,7 +131,7 @@ all data stays inside the project directory.
 ### TLS Certificate Flow
 
 ``+certs/ca/       CA root certificate (signs both server and client)
-certs/server/    Server cert for dockerd (ca.pem, server-cert.pem, server-key.pem)
+certs/server/    Server cert for dockerd (ca.pem, cert.pem, key.pem)
 certs/client/    Client cert for runner  (ca.pem, cert.pem, key.pem)
 ```
 

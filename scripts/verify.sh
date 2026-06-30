@@ -51,7 +51,7 @@ printf "${BOLD}[1/5] Files${NC}\n"
 [ -f "$PROJECT_ROOT/compose.yaml" ]      && ok "compose.yaml exists"    || fail "compose.yaml missing"
 [ -f "$PROJECT_ROOT/docker/daemon.json" ] && ok "daemon.json exists"     || fail "daemon.json missing"
 [ -f "$PROJECT_ROOT/certs/ca/ca.pem" ]   && ok "CA certificate exists"  || fail "CA cert missing — run ./scripts/generate-certs.sh"
-[ -f "$PROJECT_ROOT/certs/server/server-cert.pem" ] && ok "Server certificate exists" || fail "Server cert missing"
+[ -f "$PROJECT_ROOT/certs/server/cert.pem" ] && ok "Server certificate exists" || fail "Server cert missing"
 [ -f "$PROJECT_ROOT/certs/client/cert.pem" ] && ok "Client certificate exists" || fail "Client cert missing"
 [ -f "$PROJECT_ROOT/runner/config/config.toml" ] && ok "config.toml exists" || warn "config.toml missing — run ./scripts/register-runner.sh"
 

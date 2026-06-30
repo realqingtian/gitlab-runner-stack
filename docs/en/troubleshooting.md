@@ -50,7 +50,7 @@ docker compose logs docker
 
 3. Verify TLS certificates:
 ```bash
-openssl verify -CAfile certs/ca/ca.pem certs/server/server-cert.pem certs/client/cert.pem
+openssl verify -CAfile certs/ca/ca.pem certs/server/cert.pem certs/client/cert.pem
 ```
 
 4. Regenerate certificates if corrupted:

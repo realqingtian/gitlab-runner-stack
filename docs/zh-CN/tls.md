@@ -16,8 +16,8 @@ certs/
 │   └── ca-key.pem   CA 私钥（务必保密！）
 ├── server/      服务器证书（用于 dockerd）
 │   ├── ca.pem           CA 证书（复制给 dockerd）
-│   ├── server-cert.pem  服务器证书
-│   └── server-key.pem   服务器私钥
+│   ├── cert.pem  服务器证书
+│   └── key.pem   服务器私钥
 └── client/      客户端证书（用于 Runner + CI 任务）
     ├── ca.pem       CA 证书
     ├── cert.pem     客户端证书
@@ -71,7 +71,7 @@ rm -rf certs/ca/* certs/server/* certs/client/*
 
 ```bash
 openssl verify -CAfile certs/ca/ca.pem \
-    certs/server/server-cert.pem \
+    certs/server/cert.pem \
     certs/client/cert.pem
 ```
 

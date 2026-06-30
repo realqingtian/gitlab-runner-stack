@@ -50,7 +50,7 @@ docker compose logs docker
 
 3. 验证 TLS 证书：
 ```bash
-openssl verify -CAfile certs/ca/ca.pem certs/server/server-cert.pem certs/client/cert.pem
+openssl verify -CAfile certs/ca/ca.pem certs/server/cert.pem certs/client/cert.pem
 ```
 
 4. 如果证书损坏则重新生成：

@@ -59,18 +59,18 @@ openssl req -new -x509 -days "$VALIDITY_DAYS" \
 ## ---------------------------------------------------------------------------
 ## 2. Server certificate (for dockerd)
 ## ---------------------------------------------------------------------------
-# dockerd expects these filenames:
-#   ca.pem  server-cert.pem  server-key.pem
+# The DinD entrypoint (dockerd-entrypoint.sh) checks for these exact filenames:
+#   ca.pem  cert.pem  key.pem
 #
 # The cert must include the Docker service name as SAN so the runner can
 # connect via tcp://docker:2376.
 log "Generating server certificate (CN=$TLS_HOST)..."
 
-openssl genrsa -out "$SERVER_DIR/server-key.pem" "$KEY_SIZE" 2>/dev/null
-chmod 600 "$SERVER_DIR/server-key.pem"
+openssl genrsa -out "$SERVER_DIR/key.pem" "$KEY_SIZE" 2>/dev/null
+chmod 600 "$SERVER_DIR/key.pem"
 
 openssl req -new \
-    -key "$SERVER_DIR/server-key.pem" \
+    -key "$SERVER_DIR/key.pem" \
     -out "$SERVER_DIR/server.csr" \
     -subj "/CN=$TLS_HOST" 2>/dev/null
 
@@ -91,7 +91,7 @@ openssl x509 -req -days "$VALIDITY_DAYS" \
     -CA "$CA_DIR/ca.pem" \
     -CAkey "$CA_DIR/ca-key.pem" \
     -CAcreateserial \
-    -out "$SERVER_DIR/server-cert.pem" \
+    -out "$SERVER_DIR/cert.pem" \
     -extfile "$EXT_CONF" 2>/dev/null
 
 # dockerd expects the CA in the server dir as well
@@ -139,7 +139,7 @@ rm -f "$CA_DIR/ca.srl" "$SERVER_DIR/../ca.srl" 2>/dev/null || true
 ## ---------------------------------------------------------------------------
 log "Certificates generated successfully:"
 log "  CA:     $CA_DIR/ca.pem"
-log "  Server: $SERVER_DIR/{ca,server-cert,server-key}.pem"
+log "  Server: $SERVER_DIR/{ca,cert,key}.pem"
 log "  Client: $CLIENT_DIR/{ca,cert,key}.pem"
 log ""
-log "Verify:  openssl verify -CAfile $CA_DIR/ca.pem $SERVER_DIR/server-cert.pem $CLIENT_DIR/cert.pem"
+log "Verify:  openssl verify -CAfile $CA_DIR/ca.pem $SERVER_DIR/cert.pem $CLIENT_DIR/cert.pem"

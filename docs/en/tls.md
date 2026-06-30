@@ -17,8 +17,8 @@ certs/
 │   └── ca-key.pem   CA private key (keep secret!)
 ├── server/      Server certificate (for dockerd)
 │   ├── ca.pem           CA cert (copied for dockerd)
-│   ├── server-cert.pem  Server certificate
-│   └── server-key.pem   Server private key
+│   ├── cert.pem  Server certificate
+│   └── key.pem   Server private key
 └── client/      Client certificate (for runner + CI jobs)
     ├── ca.pem       CA cert
     ├── cert.pem     Client certificate
@@ -75,7 +75,7 @@ rm -rf certs/ca/* certs/server/* certs/client/*
 
 ```bash
 openssl verify -CAfile certs/ca/ca.pem \
-    certs/server/server-cert.pem \
+    certs/server/cert.pem \
     certs/client/cert.pem
 ```
 

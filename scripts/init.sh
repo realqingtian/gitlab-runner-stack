@@ -143,7 +143,7 @@ success "runner/config/config.toml rendered from template."
 info "Checking TLS certificates..."
 
 if [ -f "$PROJECT_ROOT/certs/ca/ca.pem" ] \
-   && [ -f "$PROJECT_ROOT/certs/server/server-cert.pem" ] \
+   && [ -f "$PROJECT_ROOT/certs/server/cert.pem" ] \
    && [ -f "$PROJECT_ROOT/certs/client/cert.pem" ]; then
     success "TLS certificates already exist."
 else
