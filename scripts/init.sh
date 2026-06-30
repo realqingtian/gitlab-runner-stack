@@ -98,17 +98,43 @@ done
 success "Directories ready."
 
 ## ---------------------------------------------------------------------------
-## 4a. Runner config — copy template if config.toml doesn't exist
+## 4a. Runner config — render config.toml from template with .env values
 ## ---------------------------------------------------------------------------
 info "Checking runner configuration..."
 
-if [ ! -f "$PROJECT_ROOT/runner/config/config.toml" ]; then
-    cp "$PROJECT_ROOT/runner/config/config.toml.template" \
-       "$PROJECT_ROOT/runner/config/config.toml"
-    success "Created runner/config/config.toml from template."
-else
-    success "runner/config/config.toml already exists."
+TEMPLATE="$PROJECT_ROOT/runner/config/config.toml.template"
+CONFIG="$PROJECT_ROOT/runner/config/config.toml"
+
+[ -f "$TEMPLATE" ] || die "config.toml template not found at $TEMPLATE"
+
+# Determine token (prefer auth token, fall back to registration token)
+INIT_TOKEN=""
+if [ -n "${RUNNER_AUTH_TOKEN:-}" ]; then
+    INIT_TOKEN="$RUNNER_AUTH_TOKEN"
+elif [ -n "${REGISTRATION_TOKEN:-}" ]; then
+    INIT_TOKEN="$REGISTRATION_TOKEN"
 fi
+
+# Always re-render from template to pick up .env changes
+sed \
+    -e "s|__GITLAB_URL__|${GITLAB_URL:-https://gitlab.example.com}|g" \
+    -e "s|__RUNNER_TOKEN__|${INIT_TOKEN}|g" \
+    -e "s|__RUNNER_NAME__|${RUNNER_NAME:-gitlab-runner}|g" \
+    "$TEMPLATE" > "$CONFIG"
+
+# Apply dynamic settings from .env
+_init_setting() {
+    _pattern="$1"
+    sed -i.bak "${_pattern}" "$CONFIG" 2>/dev/null \
+        || sed -i '' "${_pattern}" "$CONFIG"
+    rm -f "${CONFIG}.bak"
+}
+[ -n "${RUNNER_CONCURRENT:-}" ]    && _init_setting "s/^concurrent = .*/concurrent = ${RUNNER_CONCURRENT}/"
+[ -n "${RUNNER_DEFAULT_IMAGE:-}" ] && _init_setting "s|image = .*|image = \"${RUNNER_DEFAULT_IMAGE}\"|"
+[ -n "${RUNNER_PRIVILEGED:-}" ]    && _init_setting "s/privileged = .*/privileged = ${RUNNER_PRIVILEGED}/"
+[ -n "${RUNNER_LIMIT:-}" ]         && _init_setting "s/limit = .*/limit = ${RUNNER_LIMIT}/"
+
+success "runner/config/config.toml rendered from template."
 
 ## ---------------------------------------------------------------------------
 ## 4. TLS Certificates
@@ -154,7 +180,7 @@ printf "\n"
 
 if [ "$WARNINGS" -gt 0 ]; then
     printf "${YELLOW}  ⚠  %d configuration warning(s) — see above.${NC}\n" "$WARNINGS"
-    printf "${YELLOW}     Fix them in ${BOLD}.env${NC}${YELLOW}, then continue.${NC}\n"
+    printf "${YELLOW}     Fix them in ${BOLD}.env${NC}${YELLOW}, then re-run:${NC} ${CYAN}./scripts/init.sh${NC}\n"
     printf "\n"
 fi
 
@@ -165,8 +191,11 @@ printf "\n"
 printf "  2. Start the stack:\n"
 printf "     ${CYAN}%s up -d${NC}\n" "$COMPOSE_CMD"
 printf "\n"
-printf "  3. Register the runner:\n"
+printf "  3. Register the runner (for legacy tokens only):\n"
 printf "     ${CYAN}./scripts/register-runner.sh${NC}\n"
+printf "\n"
+printf "  ${YELLOW}Note:${NC} If you change .env, re-run ${CYAN}./scripts/init.sh${NC} to update config.toml,\n"
+printf "  then ${CYAN}%s restart runner${NC}.\n" "$COMPOSE_CMD"
 printf "\n"
 printf "  4. Verify:\n"
 printf "     ${CYAN}%s ps${NC}\n" "$COMPOSE_CMD"
