@@ -59,6 +59,7 @@ listen_address = "0.0.0.0:9252"
       "/cache/npm:/root/.npm:rw",
       "/cache/pnpm:/root/.local/share/pnpm:rw",
       "/cache/yarn:/usr/local/share/.cache/yarn:rw",
+      "/cache/bun:/root/.bun/install/cache:rw",
       "/cache/pip:/root/.cache/pip:rw",
       "/cache/cargo:/usr/local/cargo/registry:rw",
       "/cache/go:/root/.cache/go-build:rw",
@@ -81,6 +82,7 @@ listen_address = "0.0.0.0:9252"
       "CARGO_HOME=/usr/local/cargo",
       "PIP_CACHE_DIR=/root/.cache/pip",
       "NPM_CONFIG_CACHE=/root/.npm",
+      "BUN_INSTALL=/root/.bun",
       "CCACHE_DIR=/root/.ccache",
     ]
 

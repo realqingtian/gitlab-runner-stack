@@ -16,6 +16,7 @@
 | npm | `/root/.npm` | `cache/npm/` |
 | pnpm | `/root/.local/share/pnpm` | `cache/pnpm/` |
 | Yarn | `/usr/local/share/.cache/yarn` | `cache/yarn/` |
+| Bun | `/root/.bun/install/cache` | `cache/bun/` |
 | Pip | `/root/.cache/pip` | `cache/pip/` |
 | Cargo（Rust） | `/usr/local/cargo/registry` | `cache/cargo/` |
 | Go | `/root/.cache/go-build`、`/root/go/pkg/mod` | `cache/go/` |
@@ -49,6 +50,14 @@ script:
 ```yaml
 script:
   - npm ci --cache /root/.npm --prefer-offline
+```
+
+**Bun：**
+```yaml
+variables:
+  BUN_INSTALL: "/root/.bun"
+script:
+  - bun install --frozen-lockfile
 ```
 
 **Pip：**

@@ -47,7 +47,7 @@ directory for easy backup and migration.
 - **Mutual TLS** — auto-generated CA, server, and client certificates
 - **GitLab Runner** — supports both new auth tokens (16.0+) and legacy registration
 - **BuildKit + Buildx** — enabled in the daemon for faster, multi-platform builds
-- **Persistent caches** — Maven, Gradle, npm, pnpm, Yarn, Pip, Cargo, Go, Composer, NuGet, Flutter, ccache
+- **Persistent caches** — Maven, Gradle, npm, pnpm, Yarn, Bun, Pip, Cargo, Go, Composer, NuGet, Flutter, ccache
 - **Health checks** — both Docker daemon and Runner monitored by Compose
 - **Prometheus metrics** — runner exposes metrics on :9252
 - **Monitoring overlay** — optional Prometheus, Grafana, and AlertManager
@@ -168,7 +168,7 @@ gitlab-runner-stack/
 │   └── client/
 │
 ├── cache/                        # Shared build caches (gitignored)
-│   ├── maven/  gradle/  npm/  pnpm/  yarn/
+│   ├── maven/  gradle/  npm/  pnpm/  yarn/  bun/
 │   ├── pip/  cargo/  go/  composer/  nuget/
 │   └── pub/  ccache/  docker/  buildx/
 │

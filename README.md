@@ -46,7 +46,7 @@
 - **双向 TLS** — 自动生成 CA、服务器端和客户端证书
 - **GitLab Runner** — 同时支持新版认证令牌（16.0+）和旧版注册令牌
 - **BuildKit + Buildx** — 守护进程内置，支持更快的多平台构建
-- **持久化缓存** — Maven、Gradle、npm、pnpm、Yarn、Pip、Cargo、Go、Composer、NuGet、Flutter、ccache
+- **持久化缓存** — Maven、Gradle、npm、pnpm、Yarn、Bun、Pip、Cargo、Go、Composer、NuGet、Flutter、ccache
 - **健康检查** — Docker 守护进程和 Runner 均由 Compose 监控
 - **Prometheus 指标** — Runner 在 :9252 端口暴露监控指标
 - **监控扩展** — 可选的 Prometheus、Grafana 和 AlertManager 监控套件
@@ -165,7 +165,7 @@ gitlab-runner-stack/
 │   └── client/
 │
 ├── cache/                        # 共享构建缓存（已 gitignore）
-│   ├── maven/  gradle/  npm/  pnpm/  yarn/
+│   ├── maven/  gradle/  npm/  pnpm/  yarn/  bun/
 │   ├── pip/  cargo/  go/  composer/  nuget/
 │   └── pub/  ccache/  docker/  buildx/
 │

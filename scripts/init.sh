@@ -89,8 +89,9 @@ for dir in \
     docker/data docker/buildkit \
     runner/config runner/cache runner/hooks \
     certs/ca certs/server certs/client \
-    cache/maven cache/gradle cache/npm cache/pnpm cache/yarn \
-    cache/pip cache/cargo cache/go cache/nuget cache/composer \
+   cache/maven cache/gradle cache/npm cache/pnpm cache/yarn \
+   cache/bun \
+   cache/pip cache/cargo cache/go cache/nuget cache/composer \
     cache/pub cache/ccache cache/docker cache/buildx; do
     mkdir -p "$PROJECT_ROOT/$dir"
 done
