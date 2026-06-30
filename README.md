@@ -321,13 +321,13 @@ docker compose -f compose.yaml -f compose.monitoring.yaml up -d
 |---|---|
 | 文档 | 内容 |
 |---|---|
-| [install](docs/en/install.md) / [中文](docs/zh-CN/install.md) | 详细安装指南 |
-| [tls](docs/en/tls.md) / [中文](docs/zh-CN/tls.md) | TLS 证书架构与管理 |
-| [cache](docs/en/cache.md) / [中文](docs/zh-CN/cache.md) | 构建缓存配置 |
-| [buildkit](docs/en/buildkit.md) / [中文](docs/zh-CN/buildkit.md) | BuildKit 和 Buildx 使用 |
-| [runner](docs/en/runner.md) / [中文](docs/zh-CN/runner.md) | Runner 配置参考 |
-| [backup](docs/en/backup.md) / [中文](docs/zh-CN/backup.md) | 备份与恢复流程 |
-| [troubleshooting](docs/en/troubleshooting.md) / [中文](docs/zh-CN/troubleshooting.md) | 常见问题与解决方案 |
+| [install](docs/zh-CN/install.md) / [EN](docs/en/install.md) | 详细安装指南 |
+| [tls](docs/zh-CN/tls.md) / [EN](docs/en/tls.md) | TLS 证书架构与管理 |
+| [cache](docs/zh-CN/cache.md) / [EN](docs/en/cache.md) | 构建缓存配置 |
+| [buildkit](docs/zh-CN/buildkit.md) / [EN](docs/en/buildkit.md) | BuildKit 和 Buildx 使用 |
+| [runner](docs/zh-CN/runner.md) / [EN](docs/en/runner.md) | Runner 配置参考 |
+| [backup](docs/zh-CN/backup.md) / [EN](docs/en/backup.md) | 备份与恢复流程 |
+| [troubleshooting](docs/zh-CN/troubleshooting.md) / [EN](docs/en/troubleshooting.md) | 常见问题与解决方案 |
 
 ## 开源协议
 
