@@ -1,0 +1,38 @@
+# Go CI example
+# Uses the shared Go module and build caches (mounted by the runner)
+image: golang:1.23
+
+variables:
+  GOPATH: /root/go
+  GOCACHE: /root/.cache/go-build
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - /root/go/pkg/mod
+
+stages:
+  - test
+  - build
+
+lint:
+  stage: test
+  image: golangci/golangci-lint:latest
+  script:
+    - golangci-lint run ./...
+
+test:
+  stage: test
+  script:
+    - go test -race -coverprofile=coverage.out ./...
+  artifacts:
+    paths:
+      - coverage.out
+
+build:
+  stage: build
+  script:
+    - go build -o bin/app ./cmd/app
+  artifacts:
+    paths:
+      - bin/app

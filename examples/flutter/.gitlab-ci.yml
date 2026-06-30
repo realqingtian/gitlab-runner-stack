@@ -1,0 +1,35 @@
+# Flutter CI example
+# Uses the shared pub cache at /root/.pub-cache (mounted by the runner)
+image: ghcr.io/cirruslabs/flutter:3.24
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .dart_tool/
+    - build/
+
+stages:
+  - test
+  - build
+
+analyze:
+  stage: test
+  script:
+    - flutter pub get
+    - flutter analyze
+
+test:
+  stage: test
+  script:
+    - flutter test --coverage
+  artifacts:
+    paths:
+      - coverage/
+
+build-android:
+  stage: build
+  script:
+    - flutter build apk --release
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/

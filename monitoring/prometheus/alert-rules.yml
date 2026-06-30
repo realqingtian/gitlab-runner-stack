@@ -1,0 +1,36 @@
+groups:
+  - name: gitlab-runner
+    rules:
+      # Runner is down
+      - alert: GitLabRunnerDown
+        expr: up{job="gitlab-runner"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "GitLab Runner is down"
+          description: "Runner {{ $labels.instance }} has been down for more than 2 minutes."
+
+      # No jobs processed in the last hour
+      - alert: GitLabRunnerNoJobs
+        expr: increase(gitlab_runner_jobs_total[1h]) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No CI jobs processed in the last hour"
+          description: "The runner has not processed any jobs recently. Check if it's online and registered."
+
+      # High job failure rate
+      - alert: GitLabRunnerHighFailRate
+        expr: |
+          (sum(rate(gitlab_runner_jobs_total{status="failed"}[5m])) by (instance))
+          /
+          (sum(rate(gitlab_runner_jobs_total[5m])) by (instance))
+          > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High job failure rate (>50%)"
+          description: "Runner {{ $labels.instance }} has a job failure rate above 50%."

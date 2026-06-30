@@ -1,0 +1,39 @@
+# Docker build CI example
+# Uses Docker-in-Docker within the runner's isolated Docker daemon
+# BuildKit and layer caching are enabled via the daemon configuration
+image: docker:29
+
+variables:
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_VERIFY: "1"
+  DOCKER_CERT_PATH: /certs/client
+  DOCKER_BUILDKIT: "1"
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+services:
+  - name: docker:29-dind
+    command: ["--host=tcp://0.0.0.0:2376"]
+    alias: docker-build
+
+stages:
+  - build
+  - push
+
+before_script:
+  - docker info
+  - docker buildx version
+
+build:
+  stage: build
+  script:
+    - docker buildx build --cache-from=type=registry,ref=$IMAGE_TAG-cache
+                         --cache-to=type=registry,ref=$IMAGE_TAG-cache,mode=max
+                         -t $IMAGE_TAG .
+
+push:
+  stage: push
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u "$CI_REGISTRY_USER" --password-stdin
+    - docker push $IMAGE_TAG
+  only:
+    - main

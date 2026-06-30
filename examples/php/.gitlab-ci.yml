@@ -1,0 +1,22 @@
+# PHP CI example
+# Uses the shared Composer cache (mounted by the runner)
+image: php:8.3-cli
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/
+
+stages:
+  - test
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq git libzip-dev unzip >/dev/null
+  - docker-php-ext-install zip
+  - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  - composer install --prefer-dist --no-interaction
+
+test:
+  stage: test
+  script:
+    - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never

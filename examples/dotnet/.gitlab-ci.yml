@@ -1,0 +1,35 @@
+# .NET CI example
+# Uses the shared NuGet package cache (mounted by the runner)
+image: mcr.microsoft.com/dotnet/sdk:8.0
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - bin/
+    - obj/
+
+stages:
+  - restore
+  - build
+  - test
+
+restore:
+  stage: restore
+  script:
+    - dotnet restore
+
+build:
+  stage: build
+  script:
+    - dotnet build --configuration Release --no-restore
+  needs: [restore]
+
+test:
+  stage: test
+  script:
+    - dotnet test --configuration Release --no-build --logger "console;verbosity=detailed"
+  needs: [build]
+  artifacts:
+    when: always
+    paths:
+      - "**/TestResults/*.trx"

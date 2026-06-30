@@ -67,6 +67,12 @@ services:
       - ./certs:/certs:ro
     networks:
       - runner-net
+    healthcheck:
+      test: ["CMD", "gitlab-runner", "verify", "--max-warnings", "0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     logging:
       driver: json-file
       options:

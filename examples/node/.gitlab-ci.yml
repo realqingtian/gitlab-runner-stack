@@ -1,0 +1,33 @@
+# Node.js CI example
+# Uses the shared npm cache at /root/.npm (mounted by the runner)
+image: node:22
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+stages:
+  - install
+  - test
+  - build
+
+install:
+  stage: install
+  script:
+    - npm ci --cache /root/.npm --prefer-offline
+
+test:
+  stage: test
+  script:
+    - npm test
+  needs: [install]
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+  needs: [install]

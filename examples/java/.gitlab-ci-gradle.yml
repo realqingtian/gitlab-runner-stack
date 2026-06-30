@@ -1,0 +1,26 @@
+# Java / Gradle CI example
+# Uses the shared Gradle cache at /root/.gradle (mounted by the runner)
+image: gradle:8-jdk21
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - build/
+    - .gradle/
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - gradle build --no-daemon -x test
+
+test:
+  stage: test
+  script:
+    - gradle test --no-daemon

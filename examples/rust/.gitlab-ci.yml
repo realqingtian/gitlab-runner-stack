@@ -1,0 +1,34 @@
+# Rust CI example
+# Uses the shared Cargo registry cache (mounted by the runner)
+image: rust:1.80
+
+variables:
+  CARGO_HOME: /usr/local/cargo
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - target/
+
+stages:
+  - test
+  - build
+
+lint:
+  stage: test
+  script:
+    - rustup component add clippy
+    - cargo clippy -- -D warnings
+
+test:
+  stage: test
+  script:
+    - cargo test --verbose
+
+build:
+  stage: build
+  script:
+    - cargo build --release
+  artifacts:
+    paths:
+      - target/release/

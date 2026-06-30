@@ -44,9 +44,15 @@ directory for easy backup and migration.
 - **Docker Engine 29** — isolated DinD daemon with overlay2 storage
 - **Mutual TLS** — auto-generated CA, server, and client certificates
 - **GitLab Runner** — supports both new auth tokens (16.0+) and legacy registration
-- **BuildKit** — enabled in the daemon for faster, more efficient builds
+- **BuildKit + Buildx** — enabled in the daemon for faster, multi-platform builds
+- **Persistent caches** — Maven, Gradle, npm, pnpm, Yarn, Pip, Cargo, Go, Composer, NuGet, Flutter, ccache
+- **Health checks** — both Docker daemon and Runner monitored by Compose
+- **Prometheus metrics** — runner exposes metrics on :9252
+- **Monitoring overlay** — optional Prometheus, Grafana, and AlertManager
+- **Backup & restore** — one-command backup and restore scripts
+- **Garbage collection** — configurable Docker GC with cache retention
+- **One-command update** — pull latest images and recreate containers
 - **Log rotation** — configurable per-service log file rotation
-- **Health checks** — Docker daemon health monitored by Compose
 - **All data in-project** — nothing scattered across the host filesystem
 - **Idempotent scripts** — safe to run multiple times
 
@@ -221,14 +227,69 @@ rm -rf certs/ca/* certs/server/* certs/client/*
 docker compose restart
 ```
 
-## Roadmap
+## Operations
 
-This project is developed in phases:
+```bash
+# Full health check
+./scripts/verify.sh
 
-- **Phase 1 — Foundation** (current): compose, certs, init, registration ✅
-- **Phase 2 — Caching**: Maven, Gradle, npm, pnpm, Pip, Cargo, Go, NuGet, Docker layer cache
-- **Phase 3 — Production**: Healthchecks, auto-update, Docker GC, backup/restore, Buildx, multi-runner
-- **Phase 4 — Enterprise**: Prometheus, Grafana, Loki, AlertManager, Harbor, Rootless runner
+# Backup (config + certs)
+./scripts/backup.sh
+
+# Full backup (includes data + caches)
+./scripts/backup.sh --full
+
+# Restore
+./scripts/restore.sh backups/gitlab-runner-stack_*.tar.gz
+
+# Garbage collection
+./scripts/prune.sh
+
+# Update to latest images (preserves config + data)
+./scripts/update.sh
+```
+
+### Monitoring
+
+Enable the observability stack:
+
+```bash
+docker compose -f compose.yaml -f compose.monitoring.yaml up -d
+```
+
+| Service | URL | Default Credentials |
+|---|---|---|
+| Grafana | http://localhost:3000 | admin / admin |
+| Prometheus | http://localhost:9090 | — |
+| AlertManager | http://localhost:9093 | — |
+
+## CI Examples
+
+Ready-to-use `.gitlab-ci.yml` templates in `examples/`:
+
+| Directory | Language/Platform |
+|---|---|
+| `examples/java/` | Java (Maven + Gradle) |
+| `examples/node/` | Node.js |
+| `examples/python/` | Python |
+| `examples/golang/` | Go |
+| `examples/rust/` | Rust |
+| `examples/php/` | PHP |
+| `examples/dotnet/` | .NET |
+| `examples/flutter/` | Flutter |
+| `examples/docker/` | Docker builds |
+
+## Documentation
+
+| Doc | Content |
+|---|---|
+| [docs/install.md](docs/install.md) | Detailed installation guide |
+| [docs/tls.md](docs/tls.md) | TLS certificate architecture and management |
+| [docs/cache.md](docs/cache.md) | Build caching configuration |
+| [docs/buildkit.md](docs/buildkit.md) | BuildKit and Buildx usage |
+| [docs/runner.md](docs/runner.md) | Runner configuration reference |
+| [docs/backup.md](docs/backup.md) | Backup and restore procedures |
+| [docs/troubleshooting.md](docs/troubleshooting.md) | Common issues and solutions |
 
 ## License
 

@@ -1,0 +1,31 @@
+# Java / Maven CI example
+# Uses the shared Maven cache at /root/.m2 (mounted by the runner)
+image: maven:3.9-eclipse-temurin-21
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=/root/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - target/
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS compile
+
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml

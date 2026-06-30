@@ -24,6 +24,11 @@ cache/
 *.tar.gz
 backups/
 
+# Monitoring data (databases, not configs)
+monitoring/prometheus/data/
+monitoring/grafana/data/
+monitoring/alertmanager/data/
+
 # OS / editor
 .DS_Store
 Thumbs.db
