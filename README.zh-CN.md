@@ -281,13 +281,15 @@ docker compose -f compose.yaml -f compose.monitoring.yaml up -d
 
 | 文档 | 内容 |
 |---|---|
-| [docs/install.md](docs/install.md) | 详细安装指南 |
-| [docs/tls.md](docs/tls.md) | TLS 证书架构与管理 |
-| [docs/cache.md](docs/cache.md) | 构建缓存配置 |
-| [docs/buildkit.md](docs/buildkit.md) | BuildKit 和 Buildx 使用 |
-| [docs/runner.md](docs/runner.md) | Runner 配置参考 |
-| [docs/backup.md](docs/backup.md) | 备份与恢复流程 |
-| [docs/troubleshooting.md](docs/troubleshooting.md) | 常见问题与解决方案 |
+| 文档 | 内容 |
+|---|---|
+| [install.md](docs/install.md) / [中文](docs/install.zh-CN.md) | 详细安装指南 |
+| [tls.md](docs/tls.md) / [中文](docs/tls.zh-CN.md) | TLS 证书架构与管理 |
+| [cache.md](docs/cache.md) / [中文](docs/cache.zh-CN.md) | 构建缓存配置 |
+| [buildkit.md](docs/buildkit.md) / [中文](docs/buildkit.zh-CN.md) | BuildKit 和 Buildx 使用 |
+| [runner.md](docs/runner.md) / [中文](docs/runner.zh-CN.md) | Runner 配置参考 |
+| [backup.md](docs/backup.md) / [中文](docs/backup.zh-CN.md) | 备份与恢复流程 |
+| [troubleshooting.md](docs/troubleshooting.md) / [中文](docs/troubleshooting.zh-CN.md) | 常见问题与解决方案 |
 
 ## 开源协议
 

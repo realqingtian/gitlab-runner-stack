@@ -1,5 +1,7 @@
 # Installation Guide
 
+[English](install.md) | [简体中文](install.zh-CN.md)
+
 ## Prerequisites
 
 - **Docker Engine 24+** (host machine)

@@ -1,5 +1,7 @@
 # Runner Configuration Guide
 
+[English](runner.md) | [简体中文](runner.zh-CN.md)
+
 ## config.toml
 
 The runner's behavior is controlled by `runner/config/config.toml`, which is

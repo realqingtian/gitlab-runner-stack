@@ -1,5 +1,7 @@
 # BuildKit Guide
 
+[English](buildkit.md) | [简体中文](buildkit.zh-CN.md)
+
 ## Overview
 
 BuildKit is enabled in the Docker daemon by default via `daemon.json`:

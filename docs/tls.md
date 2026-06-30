@@ -1,5 +1,7 @@
 # TLS / Certificate Guide
 
+[English](tls.md) | [简体中文](tls.zh-CN.md)
+
 ## Overview
 
 This stack uses **mutual TLS** between the GitLab Runner and the Docker

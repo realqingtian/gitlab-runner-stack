@@ -1,5 +1,7 @@
 # Caching Guide
 
+[English](cache.md) | [简体中文](cache.zh-CN.md)
+
 ## Overview
 
 The stack provides persistent build caches for all major programming

@@ -1,5 +1,7 @@
 # Backup & Restore Guide
 
+[English](backup.md) | [简体中文](backup.zh-CN.md)
+
 ## Backup
 
 ### Standard backup (config + certs only)

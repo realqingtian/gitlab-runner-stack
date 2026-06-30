@@ -285,13 +285,15 @@ Ready-to-use `.gitlab-ci.yml` templates in `examples/`:
 
 | Doc | Content |
 |---|---|
-| [docs/install.md](docs/install.md) | Detailed installation guide |
-| [docs/tls.md](docs/tls.md) | TLS certificate architecture and management |
-| [docs/cache.md](docs/cache.md) | Build caching configuration |
-| [docs/buildkit.md](docs/buildkit.md) | BuildKit and Buildx usage |
-| [docs/runner.md](docs/runner.md) | Runner configuration reference |
-| [docs/backup.md](docs/backup.md) | Backup and restore procedures |
-| [docs/troubleshooting.md](docs/troubleshooting.md) | Common issues and solutions |
+| Doc | Content |
+|---|---|
+| [install.md](docs/install.md) / [中文](docs/install.zh-CN.md) | Detailed installation guide |
+| [tls.md](docs/tls.md) / [中文](docs/tls.zh-CN.md) | TLS certificate architecture and management |
+| [cache.md](docs/cache.md) / [中文](docs/cache.zh-CN.md) | Build caching configuration |
+| [buildkit.md](docs/buildkit.md) / [中文](docs/buildkit.zh-CN.md) | BuildKit and Buildx usage |
+| [runner.md](docs/runner.md) / [中文](docs/runner.zh-CN.md) | Runner configuration reference |
+| [backup.md](docs/backup.md) / [中文](docs/backup.zh-CN.md) | Backup and restore procedures |
+| [troubleshooting.md](docs/troubleshooting.md) / [中文](docs/troubleshooting.zh-CN.md) | Common issues and solutions |
 
 ## License
 

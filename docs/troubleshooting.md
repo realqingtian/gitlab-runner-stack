@@ -1,5 +1,7 @@
 # Troubleshooting
 
+[English](troubleshooting.md) | [简体中文](troubleshooting.zh-CN.md)
+
 ## Runner Not Appearing in GitLab
 
 ### Symptoms
