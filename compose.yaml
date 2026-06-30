@@ -18,6 +18,9 @@ services:
       DOCKER_TLS_CERTDIR: /certs
       DOCKER_DRIVER: ${DOCKER_DRIVER:-overlay2}
       TZ: ${TZ:-UTC}
+    dns:
+      - ${DNS_SERVER_1:-8.8.8.8}
+      - ${DNS_SERVER_2:-8.8.4.4}
     volumes:
       # Pre-generated TLS certificates (CA, server, client)
       - ./certs:/certs
@@ -58,6 +61,11 @@ services:
         condition: service_healthy
     environment:
       TZ: ${TZ:-UTC}
+    dns:
+      - ${DNS_SERVER_1:-8.8.8.8}
+      - ${DNS_SERVER_2:-8.8.4.4}
+    extra_hosts:
+      - "${GITLAB_EXTRA_HOST:-gitlab.example.com}:${GITLAB_HOST_IP:-127.0.0.1}"
     volumes:
       # Runner configuration (config.toml is rendered by register-runner.sh)
       - ./runner/config:/etc/gitlab-runner
