@@ -1,0 +1,37 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker daemon data
+docker/data/
+docker/buildkit/
+
+# Runner data
+runner/cache/
+runner/hooks/*.local
+runner/config/config.toml
+
+# TLS certificates (generated, never commit)
+certs/ca/
+certs/server/
+certs/client/
+
+# Build caches
+cache/
+
+# Backups
+*.tar.gz
+backups/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Preserve empty directories in git
+!**/.gitkeep

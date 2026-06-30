@@ -1,0 +1,16 @@
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "50m",
+    "max-file": "5"
+  },
+  "storage-driver": "overlay2",
+  "features": {
+    "buildkit": true
+  },
+  "userland-proxy": false,
+  "insecure-registries": [],
+  "registry-mirrors": [],
+  "max-concurrent-downloads": 10,
+  "max-concurrent-uploads": 10
+}

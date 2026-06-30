@@ -1,0 +1,82 @@
+##############################################################################
+# gitlab-runner-stack — Docker Compose
+##############################################################################
+# Production-grade GitLab Runner with isolated Docker Engine (DinD + TLS)
+##############################################################################
+
+services:
+  #--------------------------------------------------------------------------
+  # Docker Engine — isolated daemon with TLS for CI builds
+  #--------------------------------------------------------------------------
+  docker:
+    image: ${DOCKER_DIND_IMAGE:-docker:29-dind}
+    container_name: ${COMPOSE_PROJECT_NAME:-gitlab-runner-stack}-docker
+    privileged: true
+    restart: unless-stopped
+    hostname: docker
+    environment:
+      DOCKER_TLS_CERTDIR: /certs
+      DOCKER_DRIVER: ${DOCKER_DRIVER:-overlay2}
+      TZ: ${TZ:-UTC}
+    volumes:
+      # Pre-generated TLS certificates (CA, server, client)
+      - ./certs:/certs
+      # Persistent Docker data (images, containers, build cache)
+      - ./docker/data:/var/lib/docker
+      # Custom daemon configuration
+      - ./docker/daemon.json:/etc/docker/daemon.json:ro
+      # BuildKit data
+      - ./docker/buildkit:/var/lib/buildkit
+    networks:
+      - runner-net
+    healthcheck:
+      test: ["CMD", "docker", "version"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE:-50m}
+        max-file: ${LOG_MAX_FILE:-5}
+    deploy:
+      resources:
+        limits:
+          memory: ${DOCKER_MEMORY:-0}
+          cpus: ${DOCKER_CPUS:-0}
+
+  #--------------------------------------------------------------------------
+  # GitLab Runner — connects to the isolated Docker daemon over TLS
+  #--------------------------------------------------------------------------
+  runner:
+    image: ${GITLAB_RUNNER_IMAGE:-gitlab/gitlab-runner:latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-gitlab-runner-stack}-runner
+    restart: unless-stopped
+    depends_on:
+      docker:
+        condition: service_healthy
+    environment:
+      TZ: ${TZ:-UTC}
+    volumes:
+      # Runner configuration (config.toml is rendered by register-runner.sh)
+      - ./runner/config:/etc/gitlab-runner
+      # Build cache shared with CI job containers
+      - ./cache:/cache
+      # TLS certificates for connecting to the Docker daemon
+      - ./certs:/certs:ro
+    networks:
+      - runner-net
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE:-50m}
+        max-file: ${LOG_MAX_FILE:-5}
+
+##############################################################################
+# Networks
+##############################################################################
+networks:
+  runner-net:
+    name: ${COMPOSE_PROJECT_NAME:-gitlab-runner-stack}-net
+    driver: bridge

@@ -1,0 +1,72 @@
+##############################################################################
+# GitLab Runner Configuration
+##############################################################################
+# This file uses placeholder tokens that are replaced by scripts/register-runner.sh
+#   __GITLAB_URL__       → from $GITLAB_URL in .env
+#   __RUNNER_TOKEN__     → from $RUNNER_AUTH_TOKEN or $REGISTRATION_TOKEN in .env
+#   __RUNNER_NAME__      → from $RUNNER_NAME in .env
+##############################################################################
+
+# Global
+concurrent = 4
+check_interval = 0
+shutdown_timeout = 0
+log_level = "info"
+log_format = "text"
+
+[[runners]]
+  name = "__RUNNER_NAME__"
+  url = "__GITLAB_URL__"
+  token = "__RUNNER_TOKEN__"
+  executor = "docker"
+  limit = 0
+  request_concurrency = 1
+
+  [runners.custom_build_dir]
+    enabled = false
+
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+
+  [runners.docker]
+    # Remote Docker daemon (DinD with TLS)
+    host = "tcp://docker:2376"
+    tls_verify = true
+    cert_path = "/certs/client"
+
+    # Default CI job image
+    image = "alpine:latest"
+
+    # Privileged mode (required for Docker-in-Docker within CI jobs)
+    privileged = true
+
+    # Security
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    oom_score_adjust = 0
+
+    # Caching
+    disable_cache = false
+
+    # Volumes mounted into CI job containers
+    # /cache     — shared build cache
+    # /certs     — TLS client certs for remote Docker access
+    volumes = [
+      "/cache",
+      "/certs/client:/certs/client:ro",
+    ]
+
+    # Environment variables passed to every CI job container
+    environment = [
+      "DOCKER_HOST=tcp://docker:2376",
+      "DOCKER_TLS_VERIFY=1",
+      "DOCKER_CERT_PATH=/certs/client",
+      "FF_NETWORK_PER_BUILD=1",
+    ]
+
+    # Network
+    pull_policy = ["if-not-present"]
+    network_mtu = 0
+
+    # Resource defaults per job
+    shm_size = 0
