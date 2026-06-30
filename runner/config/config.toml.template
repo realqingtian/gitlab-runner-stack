@@ -21,7 +21,7 @@ listen_address = "0.0.0.0:9252"
   token = "__RUNNER_TOKEN__"
   executor = "docker"
   limit = 0
-  request_concurrency = 1
+  request_concurrency = 4
 
   [runners.custom_build_dir]
     enabled = false
