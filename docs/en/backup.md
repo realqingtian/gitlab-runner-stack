@@ -1,6 +1,6 @@
 # Backup & Restore Guide
 
-[English](backup.md) | [简体中文](backup.zh-CN.md)
+**English** | [简体中文](../zh-CN/backup.md)
 
 ## Backup
 
@@ -76,7 +76,7 @@ These directories are gitignored and should not be backed up:
 scp backups/gitlab-runner-stack_*.tar.gz newhost:/path/to/gitlab-runner-stack/backups/
 
 # On new host:
-git clone <repo-url> gitlab-runner-stack
+git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 ./scripts/init.sh
 ./scripts/restore.sh backups/gitlab-runner-stack_*.tar.gz

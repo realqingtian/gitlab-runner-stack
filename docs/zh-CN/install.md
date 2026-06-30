@@ -1,6 +1,6 @@
 # 安装指南
 
-[English](install.md) | **简体中文**
+[English](../en/install.md) | **简体中文**
 
 ## 前置条件
 
@@ -13,7 +13,7 @@
 ## 快速安装
 
 ```bash
-git clone <repo-url> gitlab-runner-stack
+git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 
 cp .env.example .env
@@ -33,7 +33,7 @@ docker compose up -d
 ### 1. 克隆仓库
 
 ```bash
-git clone <repo-url> gitlab-runner-stack
+git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 ```
 

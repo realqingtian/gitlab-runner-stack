@@ -60,7 +60,7 @@
 ## 快速开始
 
 ```bash
-git clone <your-repo-url> gitlab-runner-stack
+git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 
 # 1. 创建配置文件
@@ -139,26 +139,64 @@ certs/client/   Runner 客户端证书（ca.pem, cert.pem, key.pem）
 
 ```
 gitlab-runner-stack/
-├── compose.yaml              # Docker Compose 定义文件
-├── .env.example              # 配置模板
+│
+├── compose.yaml                  # Docker Compose — 引擎 + Runner
+├── compose.monitoring.yaml       # 监控扩展（可选）
+├── .env.example                  # 配置模板
+├── .gitignore
+├── README.md                     # 英文文档
+├── README.zh-CN.md               # 中文文档
+├── LICENSE
+│
 ├── docker/
-│   ├── daemon.json           # Docker 守护进程配置
-│   ├── data/                 # Docker 镜像、层（已 gitignore）
-│   └── buildkit/             # BuildKit 数据（已 gitignore）
+│   ├── daemon.json               # Docker 守护进程配置
+│   ├── data/                     # Docker 镜像、层（已 gitignore）
+│   └── buildkit/                 # BuildKit 数据（已 gitignore）
+│
 ├── runner/
 │   ├── config/
-│   │   └── config.toml       # Runner 配置（由 register-runner.sh 渲染）
-│   ├── cache/                # Runner 本地缓存（已 gitignore）
-│   └── hooks/                # 自定义 Runner 钩子
-├── certs/                    # TLS 证书（已 gitignore）
+│   │   └── config.toml.template  # Runner 配置模板（由 register-runner.sh 渲染）
+│   ├── cache/                    # Runner 本地缓存（已 gitignore）
+│   └── hooks/                    # 自定义 Runner 钩子
+│
+├── certs/                        # TLS 证书（已 gitignore）
 │   ├── ca/
 │   ├── server/
 │   └── client/
-├── cache/                    # 共享构建缓存（已 gitignore）
-└── scripts/
-    ├── init.sh               # 初始化 Stack
-    ├── generate-certs.sh     # 生成 TLS 证书
-    └── register-runner.sh    # 注册 Runner
+│
+├── cache/                        # 共享构建缓存（已 gitignore）
+│   ├── maven/  gradle/  npm/  pnpm/  yarn/
+│   ├── pip/  cargo/  go/  composer/  nuget/
+│   └── pub/  ccache/  docker/  buildx/
+│
+├── scripts/
+│   ├── init.sh                   # 初始化 Stack
+│   ├── generate-certs.sh         # 生成 TLS 证书
+│   ├── register-runner.sh        # 注册 Runner
+│   ├── verify.sh                 # 健康检查
+│   ├── backup.sh                 # 备份数据
+│   ├── restore.sh                # 从备份恢复
+│   ├── prune.sh                  # 垃圾回收
+│   └── update.sh                 # 更新到最新镜像
+│
+├── monitoring/                   # Prometheus + Grafana + AlertManager（可选）
+│   ├── prometheus/
+│   ├── grafana/
+│   └── alertmanager/
+│
+├── examples/                     # CI 模板（.gitlab-ci.yml）
+│   ├── java/  node/  python/  golang/  rust/
+│   └── php/  dotnet/  flutter/  docker/
+│
+└── docs/
+    ├── en/                       # 英文文档
+    │   ├── install.md  tls.md  cache.md
+    │   ├── buildkit.md  runner.md
+    │   └── backup.md  troubleshooting.md
+    └── zh-CN/                    # 中文文档
+        ├── install.md  tls.md  cache.md
+        ├── buildkit.md  runner.md
+        └── backup.md  troubleshooting.md
 ```
 
 ## 常用操作
@@ -283,13 +321,13 @@ docker compose -f compose.yaml -f compose.monitoring.yaml up -d
 |---|---|
 | 文档 | 内容 |
 |---|---|
-| [install.md](docs/install.md) / [中文](docs/install.zh-CN.md) | 详细安装指南 |
-| [tls.md](docs/tls.md) / [中文](docs/tls.zh-CN.md) | TLS 证书架构与管理 |
-| [cache.md](docs/cache.md) / [中文](docs/cache.zh-CN.md) | 构建缓存配置 |
-| [buildkit.md](docs/buildkit.md) / [中文](docs/buildkit.zh-CN.md) | BuildKit 和 Buildx 使用 |
-| [runner.md](docs/runner.md) / [中文](docs/runner.zh-CN.md) | Runner 配置参考 |
-| [backup.md](docs/backup.md) / [中文](docs/backup.zh-CN.md) | 备份与恢复流程 |
-| [troubleshooting.md](docs/troubleshooting.md) / [中文](docs/troubleshooting.zh-CN.md) | 常见问题与解决方案 |
+| [install](docs/en/install.md) / [中文](docs/zh-CN/install.md) | 详细安装指南 |
+| [tls](docs/en/tls.md) / [中文](docs/zh-CN/tls.md) | TLS 证书架构与管理 |
+| [cache](docs/en/cache.md) / [中文](docs/zh-CN/cache.md) | 构建缓存配置 |
+| [buildkit](docs/en/buildkit.md) / [中文](docs/zh-CN/buildkit.md) | BuildKit 和 Buildx 使用 |
+| [runner](docs/en/runner.md) / [中文](docs/zh-CN/runner.md) | Runner 配置参考 |
+| [backup](docs/en/backup.md) / [中文](docs/zh-CN/backup.md) | 备份与恢复流程 |
+| [troubleshooting](docs/en/troubleshooting.md) / [中文](docs/zh-CN/troubleshooting.md) | 常见问题与解决方案 |
 
 ## 开源协议
 

@@ -1,6 +1,6 @@
 # 缓存指南
 
-[English](cache.md) | **简体中文**
+[English](../en/cache.md) | **简体中文**
 
 ## 概述
 

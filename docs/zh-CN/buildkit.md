@@ -1,6 +1,6 @@
 # BuildKit 指南
 
-[English](buildkit.md) | **简体中文**
+[English](../en/buildkit.md) | **简体中文**
 
 ## 概述
 

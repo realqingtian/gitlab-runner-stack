@@ -1,6 +1,6 @@
 # 备份与恢复指南
 
-[English](backup.md) | **简体中文**
+[English](../en/backup.md) | **简体中文**
 
 ## 备份
 
@@ -76,7 +76,7 @@ crontab -e
 scp backups/gitlab-runner-stack_*.tar.gz newhost:/path/to/gitlab-runner-stack/backups/
 
 # 在新主机上：
-git clone <repo-url> gitlab-runner-stack
+git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 ./scripts/init.sh
 ./scripts/restore.sh backups/gitlab-runner-stack_*.tar.gz

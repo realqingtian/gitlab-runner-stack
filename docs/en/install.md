@@ -1,6 +1,6 @@
 # Installation Guide
 
-[English](install.md) | [简体中文](install.zh-CN.md)
+**English** | [简体中文](../zh-CN/install.md)
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@
 ## Quick Install
 
 ```bash
-git clone <repo-url> gitlab-runner-stack
+git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 
 cp .env.example .env
@@ -33,7 +33,7 @@ docker compose up -d
 ### 1. Clone the repository
 
 ```bash
-git clone <repo-url> gitlab-runner-stack
+git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 ```
 

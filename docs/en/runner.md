@@ -1,6 +1,6 @@
 # Runner Configuration Guide
 
-[English](runner.md) | [简体中文](runner.zh-CN.md)
+**English** | [简体中文](../zh-CN/runner.md)
 
 ## config.toml
 

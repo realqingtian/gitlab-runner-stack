@@ -1,6 +1,6 @@
 # TLS / Certificate Guide
 
-[English](tls.md) | [简体中文](tls.zh-CN.md)
+**English** | [简体中文](../zh-CN/tls.md)
 
 ## Overview
 

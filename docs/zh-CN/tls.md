@@ -1,6 +1,6 @@
 # TLS / 证书指南
 
-[English](tls.md) | **简体中文**
+[English](../en/tls.md) | **简体中文**
 
 ## 概述
 

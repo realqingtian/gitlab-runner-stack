@@ -1,6 +1,6 @@
 # 故障排除
 
-[English](troubleshooting.md) | **简体中文**
+[English](../en/troubleshooting.md) | **简体中文**
 
 ## Runner 未出现在 GitLab 中
 

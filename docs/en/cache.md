@@ -1,6 +1,6 @@
 # Caching Guide
 
-[English](cache.md) | [简体中文](cache.zh-CN.md)
+**English** | [简体中文](../zh-CN/cache.md)
 
 ## Overview
 
