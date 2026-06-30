@@ -4,6 +4,8 @@
 
 ### One-command production-grade GitLab Runner with isolated Docker Engine
 
+**English** | [简体中文](README.zh-CN.md)
+
 </div>
 
 ---
