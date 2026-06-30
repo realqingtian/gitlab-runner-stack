@@ -2,27 +2,26 @@
 
 # gitlab-runner-stack
 
-### One-command production-grade GitLab Runner with isolated Docker Engine
+### 一键部署生产级 GitLab Runner（隔离式 Docker Engine）
 
-**English** | [简体中文](README.zh-CN.md)
+**中文** | [English](README.en.md)
 
 </div>
 
 ---
 
-## Overview
+## 项目简介
 
-**gitlab-runner-stack** deploys a complete GitLab CI Runner environment using
-Docker Compose — no host Docker socket mounting, no manual certificate editing.
+**gitlab-runner-stack** 使用 Docker Compose 部署一套完整的 GitLab CI Runner 环境 ——
+无需挂载宿主机 Docker Socket，无需手动编辑证书。
 
-The stack runs a dedicated Docker Engine (DinD) secured with mutual TLS, and a
-GitLab Runner that connects to it over the network. Every byte of data — Docker
-images, build cache, runner config, certificates — lives inside the project
-directory for easy backup and migration.
+该 Stack 运行一个独立的 Docker Engine（DinD），通过双向 TLS 加密通信，GitLab Runner
+通过网络连接到它。所有数据 —— Docker 镜像、构建缓存、Runner 配置、TLS 证书 ——
+都存放在项目目录内，方便备份和迁移。
 
 ```
 ┌──────────────────────────────────────────────────┐
-│                  Host Machine                     │
+│                     宿主机                        │
 │                                                   │
 │  ┌─────────────┐       ┌────────────────────┐     │
 │  │   Runner    │──────▶│   Docker Engine    │     │
@@ -30,169 +29,167 @@ directory for easy backup and migration.
 │  │  runner)    │:2376  │                    │     │
 │  └──────┬──────┘       └────────┬───────────┘     │
 │         │                       │                  │
-│         │ polls                 │ creates          │
+│         │ 轮询                   │ 创建             │
 │         ▼                       ▼                  │
 │  ┌──────────────┐       ┌────────────────────┐     │
-│  │   GitLab     │       │   CI Job           │     │
-│  │   Server     │       │   Containers       │     │
+│  │   GitLab     │       │   CI 任务           │     │
+│  │   服务器      │       │   容器              │     │
 │  └──────────────┘       └────────────────────┘     │
 │                                                   │
-│  All data in ./docker ./runner ./certs ./cache    │
+│  所有数据存放在 ./docker ./runner ./certs ./cache  │
 └──────────────────────────────────────────────────┘
 ```
 
-## Features
+## 功能特性
 
-- **Docker Engine 29** — isolated DinD daemon with overlay2 storage
-- **Mutual TLS** — auto-generated CA, server, and client certificates
-- **GitLab Runner** — supports both new auth tokens (16.0+) and legacy registration
-- **BuildKit + Buildx** — enabled in the daemon for faster, multi-platform builds
-- **Persistent caches** — Maven, Gradle, npm, pnpm, Yarn, Pip, Cargo, Go, Composer, NuGet, Flutter, ccache
-- **Health checks** — both Docker daemon and Runner monitored by Compose
-- **Prometheus metrics** — runner exposes metrics on :9252
-- **Monitoring overlay** — optional Prometheus, Grafana, and AlertManager
-- **Backup & restore** — one-command backup and restore scripts
-- **Garbage collection** — configurable Docker GC with cache retention
-- **One-command update** — pull latest images and recreate containers
-- **Log rotation** — configurable per-service log file rotation
-- **All data in-project** — nothing scattered across the host filesystem
-- **Idempotent scripts** — safe to run multiple times
+- **Docker Engine 29** — 独立的 DinD 守护进程，使用 overlay2 存储驱动
+- **双向 TLS** — 自动生成 CA、服务器端和客户端证书
+- **GitLab Runner** — 同时支持新版认证令牌（16.0+）和旧版注册令牌
+- **BuildKit + Buildx** — 守护进程内置，支持更快的多平台构建
+- **持久化缓存** — Maven、Gradle、npm、pnpm、Yarn、Pip、Cargo、Go、Composer、NuGet、Flutter、ccache
+- **健康检查** — Docker 守护进程和 Runner 均由 Compose 监控
+- **Prometheus 指标** — Runner 在 :9252 端口暴露监控指标
+- **监控扩展** — 可选的 Prometheus、Grafana 和 AlertManager 监控套件
+- **备份与恢复** — 一键备份和恢复脚本
+- **垃圾回收** — 可配置的 Docker GC，支持缓存保留策略
+- **一键更新** — 拉取最新镜像并重建容器，配置和数据不受影响
+- **日志轮转** — 可配置的逐服务日志文件轮转
+- **数据项目内管理** — 所有数据都在项目目录内，不散落在宿主机各处
+- **幂等脚本** — 可安全地多次运行
 
-## Quick Start
+## 快速开始
 
 ```bash
 git clone https://github.com/realqingtian/gitlab-runner-stack.git gitlab-runner-stack
 cd gitlab-runner-stack
 
-# 1. Create your config
+# 1. 创建配置文件
 cp .env.example .env
 
-# 2. Edit .env — set your GitLab URL and runner token
+# 2. 编辑 .env — 设置 GitLab 地址和 Runner 令牌
 vi .env
 
-# 3. Initialize (generates certs, creates directories)
+# 3. 初始化（生成证书、创建目录）
 ./scripts/init.sh
 
-# 4. Start the stack
+# 4. 启动
 docker compose up -d
 
-# 5. Register the runner with GitLab
+# 5. 注册 Runner
 ./scripts/register-runner.sh
 ```
 
-That's it. The runner will appear as online in your GitLab project's
-**Settings → CI/CD → Runners** page.
+完成。Runner 将在 GitLab 项目的 **Settings → CI/CD → Runners** 页面显示为在线状态。
 
-## Getting a Runner Token
+## 获取 Runner 令牌
 
-### GitLab 16.0+ (recommended)
+### GitLab 16.0+（推荐）
 
-1. Go to **Settings → CI/CD → Runners** in your GitLab project or group
-2. Click **New project runner** (or **New group runner**)
-3. Select tags, then click **Create runner**
-4. Copy the **authentication token** that appears
-5. Paste it as `RUNNER_AUTH_TOKEN` in your `.env`
+1. 进入 GitLab 项目或组的 **Settings → CI/CD → Runners**
+2. 点击 **New project runner**（或 **New group runner**）
+3. 选择标签，然后点击 **Create runner**
+4. 复制显示的 **authentication token**（认证令牌）
+5. 将其粘贴到 `.env` 的 `RUNNER_AUTH_TOKEN` 中
 
-### GitLab < 16.0 (legacy)
+### GitLab < 16.0（旧版）
 
-1. Go to **Settings → CI/CD → Runners**
-2. Click **New project runner** to get a registration token
-3. Paste it as `REGISTRATION_TOKEN` in your `.env`
+1. 进入 **Settings → CI/CD → Runners**
+2. 点击 **New project runner** 获取注册令牌
+3. 将其粘贴到 `.env` 的 `REGISTRATION_TOKEN` 中
 
-## Configuration
+## 配置
 
-All configuration lives in `.env`. Key variables:
+所有配置都在 `.env` 文件中。主要变量：
 
-| Variable | Description | Default |
+| 变量 | 说明 | 默认值 |
 |---|---|---|
-| `GITLAB_URL` | GitLab server URL | `https://gitlab.example.com` |
-| `RUNNER_AUTH_TOKEN` | Runner auth token (16.0+) | _(empty)_ |
-| `REGISTRATION_TOKEN` | Legacy registration token | _(empty)_ |
-| `RUNNER_NAME` | Display name | `gitlab-runner-01` |
-| `RUNNER_TAGS` | Comma-separated tags | `docker,linux` |
-| `RUNNER_CONCURRENT` | Concurrent jobs | `4` |
-| `RUNNER_DEFAULT_IMAGE` | Default CI image | `alpine:latest` |
-| `RUNNER_PRIVILEGED` | Privileged CI containers | `true` |
-| `DOCKER_DIND_IMAGE` | Docker Engine image | `docker:29-dind` |
-| `DOCKER_DRIVER` | Storage driver | `overlay2` |
+| `GITLAB_URL` | GitLab 服务器地址 | `https://gitlab.example.com` |
+| `RUNNER_AUTH_TOKEN` | Runner 认证令牌（16.0+） | _（空）_ |
+| `REGISTRATION_TOKEN` | 旧版注册令牌 | _（空）_ |
+| `RUNNER_NAME` | Runner 显示名称 | `gitlab-runner-01` |
+| `RUNNER_TAGS` | 标签（逗号分隔） | `docker,linux` |
+| `RUNNER_CONCURRENT` | 并发任务数 | `4` |
+| `RUNNER_DEFAULT_IMAGE` | 默认 CI 镜像 | `alpine:latest` |
+| `RUNNER_PRIVILEGED` | CI 容器特权模式 | `true` |
+| `DOCKER_DIND_IMAGE` | Docker Engine 镜像 | `docker:29-dind` |
+| `DOCKER_DRIVER` | 存储驱动 | `overlay2` |
 
-See [`.env.example`](.env.example) for the complete list.
+完整列表请查看 [`.env.example`](.env.example)。
 
-## Architecture
+## 架构
 
-### Why a separate Docker daemon?
+### 为什么使用独立的 Docker 守护进程？
 
-Mounting the host's Docker socket (`/var/run/docker.sock`) into a runner is
-common but **insecure** — any CI job gets full root access to the host. This
-stack uses an isolated Docker Engine inside a container (DinD) with mutual TLS
-authentication. CI jobs run in containers created by this isolated daemon, and
-all data stays inside the project directory.
+将宿主机的 Docker Socket（`/var/run/docker.sock`）挂载到 Runner 中很常见，但
+**不安全** —— 任何 CI 任务都能获得宿主机的完整 root 权限。本 Stack 使用容器内的独立
+Docker Engine（DinD）并通过双向 TLS 认证。CI 任务在此独立守护进程创建的容器中运行，
+所有数据都保留在项目目录内。
 
-### TLS Certificate Flow
+### TLS 证书流程
 
-``+certs/ca/       CA root certificate (signs both server and client)
-certs/server/    Server cert for dockerd (ca.pem, server-cert.pem, server-key.pem)
-certs/client/    Client cert for runner  (ca.pem, cert.pem, key.pem)
+```
+certs/ca/       CA 根证书（签发服务器端和客户端证书）
+certs/server/   dockerd 服务器证书（ca.pem, server-cert.pem, server-key.pem）
+certs/client/   Runner 客户端证书（ca.pem, cert.pem, key.pem）
 ```
 
-Certificates are generated by `scripts/generate-certs.sh` and are valid for
-10 years by default (configurable via `CERT_VALIDITY_DAYS`).
+证书由 `scripts/generate-certs.sh` 生成，默认有效期为 10 年（可通过 `CERT_VALIDITY_DAYS` 配置）。
 
-## Directory Structure
+## 目录结构
 
 ```
 gitlab-runner-stack/
 │
-├── compose.yaml                  # Docker Compose — engine + runner
-├── compose.monitoring.yaml       # Monitoring overlay (optional)
-├── .env.example                  # Configuration template
+├── compose.yaml                  # Docker Compose — 引擎 + Runner
+├── compose.monitoring.yaml       # 监控扩展（可选）
+├── .env.example                  # 配置模板
 ├── .gitignore
-├── README.md                     # English documentation
-├── README.zh-CN.md               # 中文文档
+├── README.md                     # 中文文档（主文档）
+├── README.en.md                  # 英文文档
 ├── LICENSE
 │
 ├── docker/
-│   ├── daemon.json               # Docker daemon configuration
-│   ├── data/                     # Docker images, layers (gitignored)
-│   └── buildkit/                 # BuildKit data (gitignored)
+│   ├── daemon.json               # Docker 守护进程配置
+│   ├── data/                     # Docker 镜像、层（已 gitignore）
+│   └── buildkit/                 # BuildKit 数据（已 gitignore）
 │
 ├── runner/
 │   ├── config/
-│   │   └── config.toml.template  # Runner config template (rendered by register-runner.sh)
-│   ├── cache/                    # Runner-local cache (gitignored)
-│   └── hooks/                    # Custom runner hooks
+│   │   └── config.toml.template  # Runner 配置模板（由 register-runner.sh 渲染）
+│   ├── cache/                    # Runner 本地缓存（已 gitignore）
+│   └── hooks/                    # 自定义 Runner 钩子
 │
-├── certs/                        # TLS certificates (gitignored)
+├── certs/                        # TLS 证书（已 gitignore）
 │   ├── ca/
 │   ├── server/
 │   └── client/
 │
-├── cache/                        # Shared build caches (gitignored)
+├── cache/                        # 共享构建缓存（已 gitignore）
 │   ├── maven/  gradle/  npm/  pnpm/  yarn/
 │   ├── pip/  cargo/  go/  composer/  nuget/
 │   └── pub/  ccache/  docker/  buildx/
 │
 ├── scripts/
-│   ├── init.sh                   # Initialize the stack
-│   ├── generate-certs.sh         # Generate TLS certificates
-│   ├── register-runner.sh        # Register runner with GitLab
-│   ├── verify.sh                 # Health check
-│   ├── backup.sh                 # Backup data
-│   ├── restore.sh                # Restore from backup
-│   ├── prune.sh                  # Garbage collection
-│   └── update.sh                 # Update to latest images
+│   ├── init.sh                   # 初始化 Stack
+│   ├── generate-certs.sh         # 生成 TLS 证书
+│   ├── register-runner.sh        # 注册 Runner
+│   ├── verify.sh                 # 健康检查
+│   ├── backup.sh                 # 备份数据
+│   ├── restore.sh                # 从备份恢复
+│   ├── prune.sh                  # 垃圾回收
+│   └── update.sh                 # 更新到最新镜像
 │
-├── monitoring/                   # Prometheus + Grafana + AlertManager (optional)
+├── monitoring/                   # Prometheus + Grafana + AlertManager（可选）
 │   ├── prometheus/
 │   ├── grafana/
 │   └── alertmanager/
 │
-├── examples/                     # CI templates (.gitlab-ci.yml)
+├── examples/                     # CI 模板（.gitlab-ci.yml）
 │   ├── java/  node/  python/  golang/  rust/
 │   └── php/  dotnet/  flutter/  docker/
 │
 └── docs/
-    ├── en/                       # English documentation
+    ├── en/                       # 英文文档
     │   ├── install.md  tls.md  cache.md
     │   ├── buildkit.md  runner.md
     │   └── backup.md  troubleshooting.md
@@ -202,64 +199,63 @@ gitlab-runner-stack/
         └── backup.md  troubleshooting.md
 ```
 
-## Common Operations
+## 常用操作
 
 ```bash
-# View logs
+# 查看日志
 docker compose logs -f runner
 docker compose logs -f docker
 
-# Check status
+# 查看状态
 docker compose ps
 
-# Restart services
+# 重启服务
 docker compose restart runner
 
-# Stop everything
+# 停止所有服务
 docker compose down
 
-# Stop and remove all data (dangerous!)
+# 停止并删除所有数据（危险！）
 docker compose down -v
 ```
 
-## Registry Mirrors & Insecure Registries
+## 镜像加速与私有仓库
 
-Set in `.env`:
+在 `.env` 中设置：
 
 ```bash
-# Speed up pulls with a mirror
+# 使用镜像加速
 DOCKER_REGISTRY_MIRRORS=https://mirror.gcr.io
 
-# Allow a local registry without TLS
+# 允许不带 TLS 的本地仓库
 DOCKER_INSECURE_REGISTRIES=registry.local:5000
 ```
 
-Then update `docker/daemon.json` accordingly, or these will be handled by
-future init script enhancements.
+然后相应地更新 `docker/daemon.json`。
 
-## Troubleshooting
+## 故障排除
 
-### Runner shows as "never contacted" in GitLab
+### Runner 在 GitLab 中显示"从未联系"
 
-Check that `GITLAB_URL` and `RUNNER_AUTH_TOKEN` are correct in `.env`, then:
+检查 `.env` 中的 `GITLAB_URL` 和 `RUNNER_AUTH_TOKEN` 是否正确，然后：
 
 ```bash
 ./scripts/register-runner.sh
 docker compose logs runner
 ```
 
-### CI jobs fail with "Cannot connect to the Docker daemon"
+### CI 任务报错"Cannot connect to the Docker daemon"
 
-The Docker daemon container may still be starting. Check its health:
+Docker 守护进程容器可能还在启动中。检查健康状态：
 
 ```bash
 docker compose ps
 docker compose logs docker
 ```
 
-### Certificate errors
+### 证书错误
 
-Regenerate certificates:
+重新生成证书：
 
 ```bash
 rm -rf certs/ca/* certs/server/* certs/client/*
@@ -267,49 +263,49 @@ rm -rf certs/ca/* certs/server/* certs/client/*
 docker compose restart
 ```
 
-## Operations
+## 运维管理
 
 ```bash
-# Full health check
+# 完整健康检查
 ./scripts/verify.sh
 
-# Backup (config + certs)
+# 备份（配置 + 证书）
 ./scripts/backup.sh
 
-# Full backup (includes data + caches)
+# 完整备份（包含数据 + 缓存）
 ./scripts/backup.sh --full
 
-# Restore
+# 恢复
 ./scripts/restore.sh backups/gitlab-runner-stack_*.tar.gz
 
-# Garbage collection
+# 垃圾回收
 ./scripts/prune.sh
 
-# Update to latest images (preserves config + data)
+# 更新到最新镜像（保留配置和数据）
 ./scripts/update.sh
 ```
 
-### Monitoring
+### 监控
 
-Enable the observability stack:
+启用可观测性套件：
 
 ```bash
 docker compose -f compose.yaml -f compose.monitoring.yaml up -d
 ```
 
-| Service | URL | Default Credentials |
+| 服务 | 地址 | 默认凭证 |
 |---|---|---|
 | Grafana | http://localhost:3000 | admin / admin |
 | Prometheus | http://localhost:9090 | — |
 | AlertManager | http://localhost:9093 | — |
 
-## CI Examples
+## CI 示例
 
-Ready-to-use `.gitlab-ci.yml` templates in `examples/`:
+`examples/` 目录中提供开箱即用的 `.gitlab-ci.yml` 模板：
 
-| Directory | Language/Platform |
+| 目录 | 语言/平台 |
 |---|---|
-| `examples/java/` | Java (Maven + Gradle) |
+| `examples/java/` | Java（Maven + Gradle） |
 | `examples/node/` | Node.js |
 | `examples/python/` | Python |
 | `examples/golang/` | Go |
@@ -317,24 +313,22 @@ Ready-to-use `.gitlab-ci.yml` templates in `examples/`:
 | `examples/php/` | PHP |
 | `examples/dotnet/` | .NET |
 | `examples/flutter/` | Flutter |
-| `examples/docker/` | Docker builds |
+| `examples/docker/` | Docker 构建 |
 
-## Documentation
+## 文档
 
-| Doc | Content |
+| 文档 | 内容 |
 |---|---|
-| Doc | Content |
+| 文档 | 内容 |
 |---|---|
-| Doc | Content |
-|---|---|
-| [install](docs/en/install.md) / [中文](docs/zh-CN/install.md) | Detailed installation guide |
-| [tls](docs/en/tls.md) / [中文](docs/zh-CN/tls.md) | TLS certificate architecture and management |
-| [cache](docs/en/cache.md) / [中文](docs/zh-CN/cache.md) | Build caching configuration |
-| [buildkit](docs/en/buildkit.md) / [中文](docs/zh-CN/buildkit.md) | BuildKit and Buildx usage |
-| [runner](docs/en/runner.md) / [中文](docs/zh-CN/runner.md) | Runner configuration reference |
-| [backup](docs/en/backup.md) / [中文](docs/zh-CN/backup.md) | Backup and restore procedures |
-| [troubleshooting](docs/en/troubleshooting.md) / [中文](docs/zh-CN/troubleshooting.md) | Common issues and solutions |
+| [install](docs/en/install.md) / [中文](docs/zh-CN/install.md) | 详细安装指南 |
+| [tls](docs/en/tls.md) / [中文](docs/zh-CN/tls.md) | TLS 证书架构与管理 |
+| [cache](docs/en/cache.md) / [中文](docs/zh-CN/cache.md) | 构建缓存配置 |
+| [buildkit](docs/en/buildkit.md) / [中文](docs/zh-CN/buildkit.md) | BuildKit 和 Buildx 使用 |
+| [runner](docs/en/runner.md) / [中文](docs/zh-CN/runner.md) | Runner 配置参考 |
+| [backup](docs/en/backup.md) / [中文](docs/zh-CN/backup.md) | 备份与恢复流程 |
+| [troubleshooting](docs/en/troubleshooting.md) / [中文](docs/zh-CN/troubleshooting.md) | 常见问题与解决方案 |
 
-## License
+## 开源协议
 
 [MIT](LICENSE)
