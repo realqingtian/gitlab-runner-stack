@@ -6,6 +6,28 @@
 
 services:
   #--------------------------------------------------------------------------
+  # cert-init — One-shot service: copies host certs into shared named volume
+  #--------------------------------------------------------------------------
+  # Decouples ./certs (host source) from the runtime certificate store so
+  # DinD cannot overwrite pre-generated certificates via DOCKER_TLS_CERTDIR.
+  #--------------------------------------------------------------------------
+  cert-init:
+    image: alpine:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-gitlab-runner-stack}-cert-init
+    restart: "no"
+    volumes:
+      # Pre-generated TLS certificates from host (read-only source)
+      - ./certs:/certs-src:ro
+      # Shared named volume consumed by DinD and Runner
+      - runner-certs:/certs
+    command: >
+      sh -c "rm -rf /certs/*
+      && cp -a /certs-src/ca /certs-src/server /certs-src/client /certs/
+      && find /certs -name '.gitkeep' -delete
+      && for f in ca/ca.pem server/cert.pem server/key.pem client/cert.pem client/key.pem; do
+      [ -f /certs/$$f ] || { echo 'ERROR: missing $$f - run ./scripts/generate-certs.sh first' >&2; exit 1; }; done"
+
+  #--------------------------------------------------------------------------
   # Docker Engine — isolated daemon with TLS for CI builds
   #--------------------------------------------------------------------------
   docker:
@@ -14,13 +36,16 @@ services:
     privileged: true
     restart: unless-stopped
     hostname: docker
+    depends_on:
+      cert-init:
+        condition: service_completed_successfully
     environment:
       DOCKER_TLS_CERTDIR: /certs
       DOCKER_DRIVER: ${DOCKER_DRIVER:-overlay2}
       TZ: ${TZ:-UTC}
     volumes:
-      # Pre-generated TLS certificates (CA, server, client)
-      - ./certs:/certs
+      # TLS certificates from shared named volume (populated by cert-init)
+      - runner-certs:/certs
       # Persistent Docker data (images, containers, build cache)
       - ./docker/data:/var/lib/docker
       # Custom daemon configuration
@@ -63,8 +88,8 @@ services:
       - ./runner/config:/etc/gitlab-runner
       # Build cache shared with CI job containers
       - ./cache:/cache
-      # TLS certificates for connecting to the Docker daemon
-      - ./certs:/certs:ro
+      # TLS certificates from shared named volume (read-only)
+      - runner-certs:/certs:ro
     networks:
       - runner-net
     healthcheck:
@@ -86,3 +111,9 @@ networks:
   runner-net:
     name: ${COMPOSE_PROJECT_NAME:-gitlab-runner-stack}-net
     driver: bridge
+
+##############################################################################
+# Volumes
+##############################################################################
+volumes:
+  runner-certs:

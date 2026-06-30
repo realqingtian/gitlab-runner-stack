@@ -135,7 +135,21 @@ rm -f "$CLIENT_DIR/client.csr" "$CLIENT_DIR/client.ext"
 rm -f "$CA_DIR/ca.srl" "$SERVER_DIR/../ca.srl" 2>/dev/null || true
 
 ## ---------------------------------------------------------------------------
-## 5. Summary
+## 5. Warn if containers are running
+## ---------------------------------------------------------------------------
+# dockerd does not hot-reload TLS certificates. If the stack is running,
+# the new certs on disk will not be picked up until a restart.
+if docker compose -f "$PROJECT_ROOT/compose.yaml" ps \
+       --services --filter "status=running" 2>/dev/null | grep -q .; then
+    log "WARNING: containers are currently running."
+    log "  dockerd will NOT hot-reload the new certificates."
+    log "  Restart the stack to apply changes:"
+    log "    docker compose up -d --force-recreate"
+    log "  Or use: ./scripts/refresh-certs.sh"
+fi
+
+## ---------------------------------------------------------------------------
+## 6. Summary
 ## ---------------------------------------------------------------------------
 log "Certificates generated successfully:"
 log "  CA:     $CA_DIR/ca.pem"
